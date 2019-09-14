@@ -17,3 +17,25 @@ def make_v(i: pd.Series, qx: pd.DataFrame) -> pd.DataFrame:
     v_mat = pd.concat([v] * qx.shape[0], axis=1).transpose()
     v_mat.index = qx.index
     return v_mat
+
+
+def äx(qx: pd.DataFrame, i: pd.Series, m: int = 4, k: float = 0.02) -> pd.DataFrame:
+    """
+    Present value of annuity until death, given a mortality table and interest rate curve.
+
+    Args:
+        qx: (period) life table
+        i: interest rate series (annual values)
+        m: number of yearly payments of the annuity
+        k: cost factor
+
+    Returns:
+
+    """
+    out = qx * 0
+    v_mat = make_v(i, qx)
+    last_age = qx.index[-1]
+    out.loc[last_age] = 1 + v_mat.loc[last_age] * (1 - qx.loc[last_age]) * 1  # Last age initialisation
+    for age in qx.index[-2::-1]:  # Iterate over other ages
+        out.loc[age] = 1 + v_mat.loc[age] * (1 - qx.loc[age]) * out.loc[age + 1]
+    return (out - (m - 1) / (2 * m)) * (1 + k)  # consider costs and payment frequency

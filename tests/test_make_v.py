@@ -6,7 +6,7 @@ import unittest
 from src.calculations.present_values import make_v
 
 
-class TestPer2Gen(unittest.TestCase):
+class TestMakeV(unittest.TestCase):
 
     def setUp(self) -> None:
         self.qx = pd.DataFrame(np.zeros([4, 5]), index=[30, 31, 32, 33], columns=list(range(2020, 2025)))
@@ -17,4 +17,3 @@ class TestPer2Gen(unittest.TestCase):
         self.assertEqual(v_mat.shape, self.qx.shape)
         self.assertEqual(v_mat.iloc[0, 0], 1)
         self.assertEqual(v_mat.iloc[3, 4], 1 / 1.4)
-
