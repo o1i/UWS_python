@@ -55,3 +55,15 @@ def mx2qx(mx: np.ndarray) -> np.ndarray:
 def qx2mx(qx: np.ndarray) -> np.ndarray:
     """Converts probabilities of death to forces of mortality"""
     return -np.log(1-qx)
+
+
+def read_lc(file):
+    """opens a lee carter file, assumed to have rows of the parameters, with the first cell containing the name,
+    and the following cells (separated by ,) contain the values"""
+    lc = dict()
+    with open(file, "r") as f:
+        lines = f.readlines()
+    for line in lines:
+        items = line.split(",")
+        lc[items[0]] = np.array(list(map(float, items[1:])))
+    return lc
