@@ -12,7 +12,7 @@ import numpy as np
 import pandas as pd
 
 
-def xy(x: Union[int, np.ndarray, pd.Series]) -> Union[int, np.ndarray, pd.Series]:
+def xy(x: Union[int, np.ndarray, pd.Series, pd.Index]) -> Union[int, np.ndarray, pd.Series, pd.Index]:
     """
     Age of widower at the point of death of the wife
 
@@ -29,7 +29,7 @@ def xy(x: Union[int, np.ndarray, pd.Series]) -> Union[int, np.ndarray, pd.Series
     return x
 
 
-def yx(x: Union[int, np.ndarray, pd.Series]) -> Union[int, np.ndarray, pd.Series]:
+def yx(x: Union[int, np.ndarray, pd.Series, pd.Index]) -> Union[int, np.ndarray, pd.Series, pd.Index]:
     """
     As xy, but with reversed roles
 
@@ -42,7 +42,7 @@ def yx(x: Union[int, np.ndarray, pd.Series]) -> Union[int, np.ndarray, pd.Series
     return x - 4
 
 
-def hx(x: Union[int, np.ndarray, pd.Series]) -> Union[float, np.ndarray, pd.Series]:
+def hx(x: Union[int, np.ndarray, pd.Series, pd.Index]) -> Union[float, np.ndarray, pd.Series, pd.Index]:
     """
     Probability of leaving a widow eligible for a widow's annuity if a man dies at age y.
 
@@ -57,7 +57,7 @@ def hx(x: Union[int, np.ndarray, pd.Series]) -> Union[float, np.ndarray, pd.Seri
     return np.maximum(0, np.minimum(0.85, (x - 102) * (x - 22) * -5e-4))
 
 
-def hy(x: Union[int, np.ndarray, pd.Series]) -> Union[float, np.ndarray, pd.Series]:
+def hy(x: Union[int, np.ndarray, pd.Series, pd.Index]) -> Union[float, np.ndarray, pd.Series, pd.Index]:
     """
     Probability of leaving a widower eligible for a widower's annuity if a woman dies at age y.
 
@@ -72,7 +72,7 @@ def hy(x: Union[int, np.ndarray, pd.Series]) -> Union[float, np.ndarray, pd.Seri
     return np.maximum(0, np.minimum(0.6, (-0.55/30) * x + 1.65))
 
 
-def kx(x:  Union[int, np.ndarray, pd.Series]) -> Union[int, np.ndarray, pd.Series]:
+def kx(x:  Union[int, np.ndarray, pd.Series, pd.Index]) -> Union[int, np.ndarray, pd.Series, pd.Index]:
     """
     Average age of a child getting orphan benefits, given that the father's death generates an orphan.
 
@@ -85,7 +85,7 @@ def kx(x:  Union[int, np.ndarray, pd.Series]) -> Union[int, np.ndarray, pd.Serie
     return np.maximum(10, np.minimum(25, 10 + (x-65)))
 
 
-def ky(x: Union[int, np.ndarray, pd.Series]) -> Union[int, np.ndarray, pd.Series]:
+def ky(x: Union[int, np.ndarray, pd.Series, pd.Index]) -> Union[int, np.ndarray, pd.Series, pd.Index]:
     """
     Average age of a child getting orphan benefits, given that the mother's death generates an orphan.
 
@@ -98,7 +98,7 @@ def ky(x: Union[int, np.ndarray, pd.Series]) -> Union[int, np.ndarray, pd.Series
     return np.maximum(10, np.minimum(25, 20 + (x-65)))
 
 
-def hkx(x: Union[int, np.ndarray, pd.Series]) -> Union[float, np.ndarray, pd.Series]:
+def hkx(x: Union[int, np.ndarray, pd.Series, pd.Index]) -> Union[float, np.ndarray, pd.Series, pd.Index]:
     """
     Expected number of orphans for a man, given there are any
 
@@ -111,7 +111,7 @@ def hkx(x: Union[int, np.ndarray, pd.Series]) -> Union[float, np.ndarray, pd.Ser
     return np.maximum(0, (85 - x) / 100)
 
 
-def hky(x: Union[int, np.ndarray, pd.Series]) -> Union[float, np.ndarray, pd.Series]:
+def hky(x: Union[int, np.ndarray, pd.Series, pd.Index]) -> Union[float, np.ndarray, pd.Series, pd.Index]:
     """
     Expected number of orphans for a woman, given there are any
 
