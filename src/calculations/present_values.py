@@ -6,7 +6,7 @@ import pandas as pd
 
 def make_v(i: pd.Series, qx: pd.DataFrame) -> pd.DataFrame:
     """
-    Calculates the discount matrix for the years appearing as columns in qx
+    Calculates the discount matrix for the years appearing in the generational life table qx
 
     Args:
         i: a series with years as index, covering all years appearing in qx
@@ -15,11 +15,11 @@ def make_v(i: pd.Series, qx: pd.DataFrame) -> pd.DataFrame:
     Returns:
         A data frame the same size as qx with the (annual) discount numbers
     """
-    assert all(qx.columns.isin(i.index)), "interest rate time range must cover life table time range"
-    v = 1 / (1 + i[qx.columns])
-    v_mat = pd.concat([v] * qx.shape[0], axis=1).transpose()
-    v_mat.index = qx.index
-    return v_mat
+    years = np.add.outer(qx.index, qx.columns)
+    assert years[-1, 0] in i.index and years[0, -1] in i.index, \
+        "interest rates should cover {}-{}".format(years[-1, 0], years[0, -1])
+    v = np.array(list(map(lambda x: 1 / (1 + i[x]), years)))
+    return pd.DataFrame(v, index=qx.index, columns=qx.columns)
 
 
 def äx(qx: pd.DataFrame, i: pd.Series, m: int = 4, k: float = 0.02) -> pd.DataFrame:
