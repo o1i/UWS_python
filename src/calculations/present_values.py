@@ -3,6 +3,8 @@ from typing import Callable
 import numpy as np
 import pandas as pd
 
+# todo hkx is not used, but should be. change that.
+
 
 def make_v(i: pd.Series, qx: pd.DataFrame) -> pd.DataFrame:
     """
@@ -16,8 +18,8 @@ def make_v(i: pd.Series, qx: pd.DataFrame) -> pd.DataFrame:
         A data frame the same size as qx with the (annual) discount numbers
     """
     years = np.add.outer(qx.index, qx.columns)
-    assert years[-1, 0] in i.index and years[0, -1] in i.index, \
-        "interest rates should cover {}-{}".format(years[-1, 0], years[0, -1])
+    assert years[0, 0] in i.index and years[-1, -1] in i.index, \
+        "interest rates should cover {}-{}".format(years[0, 0], years[-1, -1])
     v = np.array(list(map(lambda x: 1 / (1 + i[x]), years)))
     return pd.DataFrame(v, index=qx.index, columns=qx.columns)
 
@@ -69,9 +71,9 @@ def äk(qx: pd.DataFrame, i: pd.Series, k: float = 0.02):
     def äz(z, i):
         """PV of orphans pension at age z, given interest rate i"""
         # Positive rates
-        out = -(np.power(1 + i, z - 24) - 1) / np.log(1 + i)
+        out = np.maximum(0, -(np.power(1 + i, z - 25) - 1) / np.log(1 + i))
         # zero rates
-        out.loc[i == 0] = 24 - z
+        out.loc[i == 0] = np.maximum(0, 25 - z)
         return out
 
     out = qx * 0
@@ -87,18 +89,17 @@ def äk(qx: pd.DataFrame, i: pd.Series, k: float = 0.02):
     return out
 
 
-def äxw(qx: pd.DataFrame, äyw: pd.DataFrame, i: pd.Series, yx: Callable[[int], int],
-        hx: Callable[[int], int], m: int = 4, k: float = 0.02):
+def äxw(qx: pd.DataFrame, äy: pd.DataFrame, i: pd.Series, yx: Callable[[int], int],
+        hx: Callable[[int], float], k: float = 0.02):
     """
     PV of widows/widowers pensions
 
     Args:
         qx: Generational life table of the person whose life is insured
-        äyw: PV of annuity of the beneficiary
+        äy: PV of annuity of the beneficiary
         i: interest rates
         yx: function calculating the average age of the spouse for deaths at age x
         hx: function calculating probability of being married at death at age x
-        m: under year frequency of payment
         k: costs
 
     Returns:
@@ -117,12 +118,12 @@ def äxw(qx: pd.DataFrame, äyw: pd.DataFrame, i: pd.Series, yx: Callable[[int],
         cols = np.maximum(0, np.minimum(qx.shape[0] - 1, np.arange(0, qx.shape[1]) - d))
         return rows, cols
 
-    out.loc[omega] = qx.loc[omega] * v_mat.loc[omega] * hx(omega) * äyw.values[get_indices(qx.index.get_loc(omega),
-                                                                                           get_d(omega))]
+    out.loc[omega] = qx.loc[omega] * v_mat.loc[omega] * hx(omega) * äy.values[get_indices(qx.index.get_loc(omega),
+                                                                                          get_d(omega))]
     for age in qx.index[-2::-1]:
         out.loc[age] = (1 - qx.loc[age]) * v_mat.loc[age] * out.loc[age + 1] + \
-                       qx.loc[age] * v_mat.loc[age] * hx(age) * äyw.values[get_indices(qx.index.get_loc(age),
-                                                                                       get_d(age))]
+                       qx.loc[age] * v_mat.loc[age] * hx(age) * äy.values[get_indices(qx.index.get_loc(age),
+                                                                                      get_d(age))]
 
-    out = (out - (m - 1) / (2 * m)) * (1 + k)
+    out = out * (1 + k)
     return out

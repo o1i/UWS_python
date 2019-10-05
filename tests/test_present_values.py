@@ -12,8 +12,8 @@ class TestPresentValues(unittest.TestCase):
     def setUp(self) -> None:
         self.qx_zero = pd.DataFrame(np.zeros([3, 3]), columns=[2019, 2020, 2021], index=[30, 31, 32])
         self.qx_ones = pd.DataFrame(np.ones([3, 3]), columns=[2019, 2020, 2021], index=[30, 31, 32])
-        self.i_zero = pd.Series(np.zeros([3]), index=[2019, 2020, 2021])
-        self.i_ones = pd.Series(np.ones([3]), index=[2019, 2020, 2021])
+        self.i_zero = pd.Series(np.zeros([5]), index=[2049, 2050, 2051, 2052, 2053])
+        self.i_ones = pd.Series(np.ones([5]), index=[2049, 2050, 2051, 2052, 2053])
 
     def test_zero_interest(self):
         values = äx(self.qx_zero, self.i_zero, k=0, m=1)
@@ -31,6 +31,6 @@ class TestPresentValues(unittest.TestCase):
         self.assertEqual(values.iloc[0, 0], 1)
 
     def test_widows(self):
-        äyw = äx(self.qx_ones, self.i_zero, m=1, k=0)
-        value = äxw(self.qx_ones, äyw, self.i_zero, yx, hx, m=1, k=0)
+        äy = äx(self.qx_ones, self.i_zero, m=1, k=0)
+        value = äxw(self.qx_ones, äy, self.i_zero, yx, hx, k=0)
         self.assertEqual(value.loc[31, 2019], hx(31))
