@@ -3,28 +3,29 @@ import pandas as pd
 from scipy.stats import linregress
 
 
-def project_lc(qx: pd.DataFrame, lc: dict, factor: float = 1.0, n_years: int = 50) -> pd.DataFrame:
+def project_lc(mx: pd.DataFrame, lc: dict, factor: float = 1.0, n_years: int = 88) -> pd.DataFrame:
     """
     Projects a life table according to the lee-carter model for n_years years
 
     Args:
-        qx: life table. int-index on ages (rows) and year columns (int)
+        mx: life table. int-index on ages (rows) and year columns (int)
         lc: dict with the parameters of the lee-carter model
         factor: multiplicative factor for mortality improvement
         n_years: number of years to project
 
     Returns:
-        qx extended by n_years columns with projected probabilities of mortality
+        qx of mx extended by n_years columns with projected probabilities of mortality
 
     """
-    assert(qx.shape[0] == len(lc["x"]))
-    lastyear = qx.columns[-1]
-    mx = qx2mx(qx[lastyear].values).reshape([-1, 1])
+    assert(mx.shape[0] == len(lc["x"]))
+    lastyear = mx.columns[-1]
     slope = linregress(np.array(lc["y"]), lc["kappa2"]).slope * factor
-    add = mx2qx(mx * np.exp(np.matmul(np.maximum(0, np.array(lc["beta2"]).reshape([-1, 1])),
-                                      np.arange(1, n_years + 1).reshape([1, -1]) * slope)))
-    add_df = pd.DataFrame(add, columns=lastyear + np.arange(1, n_years + 1), index=qx.index)
-    return pd.concat([qx, add_df], axis=1)
+    add = mx.loc[:, lastyear].values.reshape([-1, 1]) * \
+          np.exp(np.matmul(np.maximum(0, np.array(lc["beta2"]).reshape([-1, 1])),
+                           np.arange(1, n_years + 1).reshape([1, -1]) * slope))
+    add_df = pd.DataFrame(add, columns=lastyear + np.arange(1, n_years + 1), index=mx.index)
+    combined = pd.concat([mx, add_df], axis=1)
+    return per2gen(mx2qx(combined))
 
 
 def per2gen(qx: pd.DataFrame) -> pd.DataFrame:
