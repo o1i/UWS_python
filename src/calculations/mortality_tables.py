@@ -25,7 +25,7 @@ def project_lc(mx: pd.DataFrame, lc: dict, factor: float = 1.0, n_years: int = 8
                            np.arange(1, n_years + 1).reshape([1, -1]) * slope))
     add_df = pd.DataFrame(add, columns=lastyear + np.arange(1, n_years + 1), index=mx.index)
     combined = pd.concat([mx, add_df], axis=1)
-    return per2gen(mx2qx(combined))
+    return mx2qx(combined)
 
 
 def per2gen(qx: pd.DataFrame) -> pd.DataFrame:
