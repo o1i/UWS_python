@@ -4,3 +4,6 @@ services:
 
 before_install:
   - docker build -f Dockerfile.test -t theolib/uws .
+
+script:
+  - docker run theolib/uws python -m unittest discover ./tests
