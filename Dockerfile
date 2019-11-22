@@ -16,4 +16,5 @@ COPY src/ /app/src/
 COPY data/ /app/data/
 COPY main.py /app
 WORKDIR /app
+EXPOSE 80
 CMD ["python", "main.py"]
