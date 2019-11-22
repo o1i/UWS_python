@@ -12,6 +12,7 @@ deploy:
   provider: elasticbeanstalk
   region: "us-east-2"
   name: uws
+  app: "uws"
   env: "Uws-env"
   bucket_name: "elasticbeanstalk-us-east-2-758241873697"
   bucket_path: "uws"
