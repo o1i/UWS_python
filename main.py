@@ -59,7 +59,7 @@ app.layout = html.Div(children=[
     html.H1(children='Mortality Projection of a 65 year old male'),
 
     html.Div(children='''
-        Projection using the Lee Carter Model. whoooooo
+        Projection using the Lee Carter Model. wheeeee
     '''),
 
     dcc.Slider(
